@@ -1,0 +1,6 @@
+logs:
+  # Configure log settings here...
+  general:
+    level: ERROR
+service:
+  externalIPs: ["192.168.0.100"]
