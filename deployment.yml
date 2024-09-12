@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver
+  namespace: webserver
+  labels:
+    app: webserver
+spec:
+  selector:
+    matchLabels:
+      app: webserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+          securityContext:
+            runAsUser: 0 # Run as root
+          volumeMounts:
+            - name: webserver-cm
+              mountPath: /etc/nginx
+            - name: webserver-ssl-secrets
+              mountPath: /etc/nginx/ssl
+              readOnly: true
+      volumes:
+        - name: webserver-cm
+          configMap:
+            name: webserver-cm
+        - name: webserver-ssl-secrets
+          secret:
+            secretName: webserver-ssl-secrets

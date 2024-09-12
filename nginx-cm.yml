@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webserver-cm
+data:
+  # key: value
+  # file: |
+  #   content
+  # ---
+  nginx.conf: |
+    user nginx;
+    worker_processes 1;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      server {
+        listen       80;
+        listen       443 ssl;
+        
+        server_name  _;
+
+        ssl_certificate /etc/nginx/ssl/server-crt.pem;
+        ssl_certificate_key /etc/nginx/ssl/server-key.pem;
+
+
+        location /test {
+            return 200 'This is the content you want to return';
+            add_header Content-Type text/plain;
+        }
+
+        location / {
+            autoindex on;
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+      }
+    }
