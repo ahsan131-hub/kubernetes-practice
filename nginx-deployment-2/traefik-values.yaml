@@ -1,0 +1,11 @@
+ports:
+  web:
+    redirectTo:
+      port: websecure
+  websecure:
+    tls:
+      enabled: true
+additionalArguments:
+  - "--certificatesresolvers.default.acme.email=ahsanjsdev@gmail.com"
+  - "--certificatesresolvers.default.acme.storage=/data/acme.json"
+  - "--certificatesresolvers.default.acme.tlschallenge=true"
