@@ -1,11 +1,121 @@
+# ports:
+#   web:
+#     redirectTo:
+#       port: websecure
+#   websecure:
+#     tls:
+#       enabled: true
+# # additionalArguments:
+# #   - "--certificatesresolvers.default.acme.email=ahsanjsdev@gmail.com"
+# #   - "--certificatesresolvers.default.acme.storage=/data/acme.json"
+# #   - "--certificatesresolvers.default.acme.tlschallenge=true"
+# additionalArguments:
+#   # DNS Challenge with Cloudflare Example:
+#   - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+#   - --certificatesresolvers.cloudflare.acme.email=ahsanjsdev@gmail.com
+#   - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+#   - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+
+# additionalArguments:
+#   # DNS Challenge with Cloudflare Example:
+#   - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+#   - --certificatesresolvers.cloudflare.acme.email=ahsanjsdev@gmail.com
+#   - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+#   - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+
+logs:
+  # Configure log settings here...
+  general:
+    level: ERROR
+
 ports:
+  # Configure your entrypoints here...
   web:
     redirectTo:
       port: websecure
   websecure:
     tls:
       enabled: true
-additionalArguments:
-  - "--certificatesresolvers.default.acme.email=ahsanjsdev@gmail.com"
-  - "--certificatesresolvers.default.acme.storage=/data/acme.json"
-  - "--certificatesresolvers.default.acme.tlschallenge=true"
+
+  traefik:
+    port: 9000 # Traefik dashboard port
+    exposedPort: 9000
+    protocol: TCP
+
+# env:
+#   # DNS Challenge Credentials (Cloudflare):
+#   - name: CF_API_EMAIL
+#     valueFrom:
+#       secretKeyRef:
+#         key: email
+#         name: cf-credentials
+#   - name: CF_API_KEY
+#     valueFrom:
+#       secretKeyRef:
+#         key: apiKey
+#         name: cf-credentials
+
+ingressRoute:
+  dashboard:
+    # -- Create an IngressRoute for the dashboard
+    enabled: true
+    # -- Additional ingressRoute annotations (e.g. for kubernetes.io/ingress.class)
+    # annotations: {}
+    # # -- Additional ingressRoute labels (e.g. for filtering IngressRoute by custom labels)
+    # labels: {}
+    # # -- The router match rule used for the dashboard ingressRoute
+    # matchRule: Host(traefik.ahsanjsdev.tech) && PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+    # # # -- The internal service used for the dashboard ingressRoute
+    # services:
+    #   - name: api@internal
+    #     kind: TraefikService
+    # # # -- Specify the allowed entrypoints to use for the dashboard ingress route, (e.g. traefik, web, websecure).
+    # # # By default, it's using traefik entrypoint, which is not exposed.
+    # # # /!\ Do not expose your dashboard without any protection over the internet /!\
+    # entryPoints: ["traefik"]
+    # # # -- Additional ingressRoute middlewares (e.g. for authentication)
+    # middlewares: []
+    # # # -- TLS options (e.g. secret containing certificate)
+    # tls: {} # if you dont do this then traifik will will always try to create new ssl certificates
+
+# persistence:
+#   enabled: true
+#   name: ssl-certs
+#   size: 1Gi
+#   path: /ssl-certs
+
+# deployment:
+#   initContainers:
+#     - name: volume-permissions
+#       image: busybox:latest
+#       command:
+#         [
+#           "sh",
+#           "-c",
+#           "touch /ssl-certs/acme.json; chmod -v 600 /ssl-certs/acme.json",
+#         ]
+#       volumeMounts:
+#         - mountPath: /ssl-certs
+#           name: ssl-certs
+
+# podSecurityContext:
+#   fsGroup: 65532
+#   fsGroupChangePolicy: "OnRootMismatch"
+
+# Security configurations for the deployment
+# podSecurityContext:
+#   fsGroup: 65532
+#   fsGroupChangePolicy: "OnRootMismatch"
+
+# securityContext:
+#   capabilities:
+#     drop: [ALL]
+#   readOnlyRootFilesystem: true
+#   runAsGroup: 65532
+#   runAsNonRoot: true
+#   runAsUser: 65532
+
+# Traefik as default Ingress Controller (for Kubernetes 1.19+)
+ingressClass:
+  enabled: true
+  isDefaultClass: true

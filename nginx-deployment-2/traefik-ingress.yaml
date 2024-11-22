@@ -19,4 +19,5 @@ spec:
   tls:
     - hosts:
         - ahsanjsdev.tech
-      secretName: tls-ahsanjsdev-tech
+      # secretName: tls-ahsanjsdev-tech
+      secretName: nginx1
